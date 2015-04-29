@@ -19,6 +19,7 @@ var ui = require('./lib/ui');
 var chalk = require('chalk');
 var config = require('./lib/config');
 var globalConfig = require('./lib/global-config');
+var localConfig = require('./lib/local-config');
 var core = require('./lib/core');
 var bundle = require('./lib/bundle');
 var registry = require('./lib/registry');
@@ -493,9 +494,14 @@ process.on('uncaughtException', function(err) {
 
     case 'c':
     case 'config':
-      var property = args[1];
-      var value = args.splice(2).join(' ');
-      globalConfig.set(property, value);
+      options = readOptions(args, ['--local']);
+      var property = options.args[1];
+      var value = options.args.splice(2).join(' ');
+      if (options.local) {
+        localConfig.set(property, value);
+      } else {
+        globalConfig.set(property, value);
+      }
       break;
 
     case 'cc':
